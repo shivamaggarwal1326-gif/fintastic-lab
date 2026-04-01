@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  experimental: {
+    // Disable this if it's causing the build to fail
+    typedRoutes: false, 
+  },
+}
 
-module.exports = nextConfig;
+export default nextConfig;
