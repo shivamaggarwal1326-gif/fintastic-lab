@@ -57,3 +57,24 @@ export default function Home() {
     </div>
   );
 }
+
+{/* Statistics & Probability Card */}
+        <Link 
+          href="/statistics" 
+          className="block group w-full max-w-2xl mx-auto rounded-2xl border border-rose-500/25 bg-rose-500/5 p-6 transition-all duration-300 hover:bg-rose-500/10 hover:shadow-[0_0_32px_-8px_rgba(244,63,94,0.15)]"
+        >
+          <div className="flex items-start gap-5">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-inner shadow-white/5 border border-rose-500/30 text-rose-400 bg-rose-500/10">
+              {/* Bar Chart Icon */}
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold font-mono text-zinc-100 mb-2 group-hover:text-rose-400 transition-colors">
+                Statistics & Probability
+              </h2>
+              <p className="text-sm text-zinc-500 font-mono leading-relaxed">
+                Central tendency, variance, distributions, and hypothesis testing.
+              </p>
+            </div>
+          </div>
+        </Link>
