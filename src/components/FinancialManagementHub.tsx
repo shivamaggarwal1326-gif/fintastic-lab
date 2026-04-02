@@ -5,43 +5,67 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, CheckCircle, Search, 
   Briefcase, Target, Scale, Users, Clock, 
-  BarChart, Building2, BookOpen, HelpCircle, Lightbulb, Layers, GraduationCap
+  BarChart, Building2, BookOpen, HelpCircle, 
+  Lightbulb, Layers, GraduationCap, Activity, TrendingUp, Compass
 } from "lucide-react";
 import {
   LineChart, Line, BarChart as RechartsBarChart, Bar, XAxis, YAxis, 
   CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Cell
 } from "recharts";
-import FloatingFormulaBackground from "@/components/FloatingFormulaBackground";
 
 // ═══════════════════════════════════════════════════════════════════════════
-// FORMULAS & THEMES
+// ELEGANT FLOATING BACKGROUND (NEW)
 // ═══════════════════════════════════════════════════════════════════════════
 
-const FM_FORMULAS = [
-  "FV = PV(1+r)ⁿ",
-  "PV = FV/(1+r)ⁿ",
-  "FVA = PMT[(1+r)ⁿ - 1]/r",
-  "PVA = PMT[1 - (1+r)⁻ⁿ]/r",
-  "PV_Perpetuity = PMT/r",
-  "NPV = Σ [C_t / (1+r)ᵗ] - C_0",
-  "PI = PV(Inflows) / PV(Outflows)",
-  "ARR = Avg Profit / Avg Inv",
-  "WACC = W_e(K_e) + W_d(K_d)(1-t)",
-  "Payback = Init Inv / Annual Cash",
-  "EAR = (1 + r/m)ᵐ - 1",
-  "V_L = V_U + (t × D)",
-  "CCC = DIO + DSO - DPO"
-];
+function ElegantBackground() {
+  // Generate random floating financial elements with varying depths and speeds
+  const elements = useMemo(() => {
+    const symbols = ["₹", "$", "%", "8.5%", "1.15", "WACC", "NPV", "IRR", "ROI", "0.00", "▲", "▼", "10k", "DCF"];
+    return Array.from({ length: 25 }).map((_, i) => ({
+      id: i,
+      text: symbols[Math.floor(Math.random() * symbols.length)],
+      x: Math.random() * 100, // starting X position (vw)
+      scale: Math.random() * 0.6 + 0.4, // size variation
+      duration: Math.random() * 25 + 25, // speed
+      delay: Math.random() * -30, // staggered starts
+    }));
+  }, []);
 
-const FM_BALLOON_COLORS = [
-  { bg: "bg-indigo-900/40", text: "text-indigo-300", glow: "rgba(99,102,241,0)" },
-  { bg: "bg-violet-900/40", text: "text-violet-300", glow: "rgba(139,92,246,0)" },
-  { bg: "bg-fuchsia-950/50", text: "text-fuchsia-300", glow: "rgba(217,70,239,0)" },
-  { bg: "bg-teal-900/40", text: "text-teal-300", glow: "rgba(20,184,166,0)" },
-  { bg: "bg-sky-900/40", text: "text-sky-300", glow: "rgba(14,165,233,0)" },
-  { bg: "bg-orange-900/40", text: "text-orange-300", glow: "rgba(249,115,22,0)" },
-  { bg: "bg-zinc-800/50", text: "text-zinc-300", glow: "rgba(161,161,170,0)" }
-];
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {/* Premium Vercel-style Subtle Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+      
+      {/* Deep Central Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] opacity-50 mix-blend-screen" />
+      <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-teal-500/10 rounded-full blur-[100px] opacity-30 mix-blend-screen" />
+
+      {/* Floating Numbers & Symbols */}
+      {elements.map((el) => (
+        <motion.div
+          key={el.id}
+          className="absolute font-mono font-bold select-none text-zinc-500/10"
+          initial={{ x: `${el.x}vw`, y: "110vh", scale: el.scale }}
+          animate={{ y: "-10vh", rotate: [0, 15, -15, 0] }}
+          transition={{
+            y: { duration: el.duration, repeat: Infinity, ease: "linear", delay: el.delay },
+            rotate: { duration: el.duration * 0.8, repeat: Infinity, ease: "easeInOut" }
+          }}
+          style={{ 
+            fontSize: `${el.scale * 3.5}rem`, 
+            filter: `blur(${el.scale > 0.8 ? 0 : 3}px)` // Creates depth of field
+          }}
+        >
+          {el.text}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THEMES & STYLES
+// ═══════════════════════════════════════════════════════════════════════════
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -56,16 +80,162 @@ const slideRight = {
 
 const getAccent = (color: string) => {
   const map: any = {
-    indigo: { text: "text-indigo-400", bgLight: "bg-indigo-500/10", bgGhost: "bg-indigo-500/5", border: "border-indigo-500/25", via: "via-indigo-500/40", accent: "accent-indigo-500", glow: "hover:shadow-[0_0_32px_-8px_rgba(99,102,241,0.12)]" },
-    fuchsia: { text: "text-fuchsia-400", bgLight: "bg-fuchsia-500/10", bgGhost: "bg-fuchsia-500/5", border: "border-fuchsia-500/25", via: "via-fuchsia-500/40", accent: "accent-fuchsia-500", glow: "hover:shadow-[0_0_32px_-8px_rgba(217,70,239,0.12)]" },
-    violet: { text: "text-violet-400", bgLight: "bg-violet-500/10", bgGhost: "bg-violet-500/5", border: "border-violet-500/25", via: "via-violet-500/40", accent: "accent-violet-500", glow: "hover:shadow-[0_0_32px_-8px_rgba(139,92,246,0.12)]" },
-    emerald: { text: "text-emerald-400", bgLight: "bg-emerald-500/10", bgGhost: "bg-emerald-500/5", border: "border-emerald-500/25", via: "via-emerald-500/40", accent: "accent-emerald-500", glow: "hover:shadow-[0_0_32px_-8px_rgba(16,185,129,0.12)]" },
-    rose: { text: "text-rose-400", bgLight: "bg-rose-500/10", bgGhost: "bg-rose-500/5", border: "border-rose-500/25", via: "via-rose-500/40", accent: "accent-rose-500", glow: "hover:shadow-[0_0_32px_-8px_rgba(244,63,94,0.12)]" },
-    sky: { text: "text-sky-400", bgLight: "bg-sky-500/10", bgGhost: "bg-sky-500/5", border: "border-sky-500/25", via: "via-sky-500/40", accent: "accent-sky-500", glow: "hover:shadow-[0_0_32px_-8px_rgba(14,165,233,0.12)]" },
-    teal: { text: "text-teal-400", bgLight: "bg-teal-500/10", bgGhost: "bg-teal-500/5", border: "border-teal-500/25", via: "via-teal-500/40", accent: "accent-teal-500", glow: "hover:shadow-[0_0_32px_-8px_rgba(20,184,166,0.12)]" },
-    orange: { text: "text-orange-400", bgLight: "bg-orange-500/10", bgGhost: "bg-orange-500/5", border: "border-orange-500/25", via: "via-orange-500/40", accent: "accent-orange-500", glow: "hover:shadow-[0_0_32px_-8px_rgba(249,115,22,0.12)]" }
+    indigo: { text: "text-indigo-400", bgLight: "bg-indigo-500/10", bgGhost: "bg-indigo-500/5", border: "border-indigo-500/25", via: "via-indigo-500/40", accent: "accent-indigo-500", glow: "hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)]" },
+    fuchsia: { text: "text-fuchsia-400", bgLight: "bg-fuchsia-500/10", bgGhost: "bg-fuchsia-500/5", border: "border-fuchsia-500/25", via: "via-fuchsia-500/40", accent: "accent-fuchsia-500", glow: "hover:shadow-[0_0_40px_-10px_rgba(217,70,239,0.2)]" },
+    violet: { text: "text-violet-400", bgLight: "bg-violet-500/10", bgGhost: "bg-violet-500/5", border: "border-violet-500/25", via: "via-violet-500/40", accent: "accent-violet-500", glow: "hover:shadow-[0_0_40px_-10px_rgba(139,92,246,0.2)]" },
+    emerald: { text: "text-emerald-400", bgLight: "bg-emerald-500/10", bgGhost: "bg-emerald-500/5", border: "border-emerald-500/25", via: "via-emerald-500/40", accent: "accent-emerald-500", glow: "hover:shadow-[0_0_40px_-10px_rgba(16,185,129,0.2)]" },
+    rose: { text: "text-rose-400", bgLight: "bg-rose-500/10", bgGhost: "bg-rose-500/5", border: "border-rose-500/25", via: "via-rose-500/40", accent: "accent-rose-500", glow: "hover:shadow-[0_0_40px_-10px_rgba(244,63,94,0.2)]" },
+    sky: { text: "text-sky-400", bgLight: "bg-sky-500/10", bgGhost: "bg-sky-500/5", border: "border-sky-500/25", via: "via-sky-500/40", accent: "accent-sky-500", glow: "hover:shadow-[0_0_40px_-10px_rgba(14,165,233,0.2)]" },
+    teal: { text: "text-teal-400", bgLight: "bg-teal-500/10", bgGhost: "bg-teal-500/5", border: "border-teal-500/25", via: "via-teal-500/40", accent: "accent-teal-500", glow: "hover:shadow-[0_0_40px_-10px_rgba(20,184,166,0.2)]" },
+    orange: { text: "text-orange-400", bgLight: "bg-orange-500/10", bgGhost: "bg-orange-500/5", border: "border-orange-500/25", via: "via-orange-500/40", accent: "accent-orange-500", glow: "hover:shadow-[0_0_40px_-10px_rgba(249,115,22,0.2)]" }
   };
   return map[color] || map.indigo;
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ANALOGY VISUALIZATIONS (FRAMER MOTION)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const AnalogyVisuals = {
+  // Intro FM: Heart Pumping Blood
+  IntroHeart: ({ color }: { color: string }) => {
+    const c = getAccent(color);
+    return (
+      <div className="relative w-24 h-24">
+        <motion.div animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }} transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }} className={`absolute inset-0 rounded-full ${c.bgLight} blur-xl`} />
+        <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }} className="flex items-center justify-center h-full relative z-10">
+          <Activity className={`w-12 h-12 ${c.text}`} />
+        </motion.div>
+        {[0, 90, 180, 270].map((angle) => (
+          <motion.div key={angle} animate={{ x: [0, Math.cos(angle * Math.PI / 180) * 45], y: [0, Math.sin(angle * Math.PI / 180) * 45], opacity: [1, 0], scale: [1, 0.5] }} transition={{ repeat: Infinity, duration: 1.2, ease: "easeOut" }} className={`absolute top-1/2 left-1/2 w-2 h-2 rounded-full ${c.bgLight} border ${c.border}`} style={{ marginTop: '-4px', marginLeft: '-4px' }} />
+        ))}
+      </div>
+    );
+  },
+
+  // Goals of FM: Sprint vs Marathon
+  GoalsMarathon: ({ color }: { color: string }) => {
+    const c = getAccent(color);
+    return (
+      <div className="relative w-32 h-20 border-b border-l border-zinc-700 flex items-end">
+        <motion.div animate={{ height: ["0%", "90%", "30%", "30%"] }} transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }} className="w-4 bg-zinc-600 rounded-t-sm mx-2" />
+        <motion.div animate={{ height: ["0%", "30%", "60%", "100%"] }} transition={{ repeat: Infinity, duration: 3, ease: "linear" }} className={`w-4 ${c.bgLight} border ${c.border} rounded-t-sm mx-2`} />
+        <div className={`absolute top-2 right-2 text-[10px] font-mono ${c.text}`}>Wealth</div>
+        <div className="absolute top-2 left-6 text-[10px] font-mono text-zinc-500">Profit</div>
+      </div>
+    );
+  },
+
+  // Risk-Return: Rollercoaster
+  RiskRollercoaster: ({ color }: { color: string }) => {
+    const c = getAccent(color);
+    return (
+      <div className="relative w-32 h-20 flex items-center justify-center">
+        <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible">
+          <motion.path d="M 0 25 Q 20 0, 40 25 T 80 25 T 100 -10" fill="transparent" stroke="currentColor" strokeWidth="2" className="text-zinc-700" />
+          <motion.circle r="4" className={c.text} fill="currentColor"
+            animate={{ offsetDistance: ["0%", "100%"] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+            style={{ offsetPath: "path('M 0 25 Q 20 0, 40 25 T 80 25 T 100 -10')" }}
+          />
+        </svg>
+      </div>
+    );
+  },
+
+  // Agency Problem: Two conflicting targets
+  AgencyArrows: ({ color }: { color: string }) => {
+    const c = getAccent(color);
+    return (
+      <div className="relative w-32 h-24 flex items-center justify-between px-2">
+        <div className="flex flex-col items-center gap-2">
+          <Users className="w-6 h-6 text-zinc-500" />
+          <span className="text-[8px] font-mono text-zinc-500">Principal</span>
+        </div>
+        <div className="relative flex-1 h-full flex items-center justify-center">
+          <motion.div animate={{ width: ["0%", "100%", "0%"], x: ["-50%", "0%", "50%"] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }} className={`h-0.5 ${c.bgLight} absolute`} />
+          <motion.div animate={{ rotate: [0, 15, -15, 0] }} transition={{ repeat: Infinity, duration: 2 }} className={`z-10 ${c.text}`}><ArrowRight className="w-5 h-5" /></motion.div>
+        </div>
+        <div className="flex flex-col items-center gap-2">
+          <Briefcase className={`w-6 h-6 ${c.text}`} />
+          <span className={`text-[8px] font-mono ${c.text}`}>Agent</span>
+        </div>
+      </div>
+    );
+  },
+
+  // Emerging Roles: Radar / Navigator
+  NavigatorRadar: ({ color }: { color: string }) => {
+    const c = getAccent(color);
+    return (
+      <div className={`relative w-20 h-20 rounded-full border-2 border-zinc-800 ${c.bgGhost} overflow-hidden flex items-center justify-center`}>
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 3, ease: "linear" }} className="absolute inset-0 origin-center" style={{ background: `conic-gradient(from 0deg, transparent 70%, ${c.glow.match(/rgba\([^)]+\)/)?.[0].replace(',0)', ',0.4)') || 'rgba(255,255,255,0.2)'} 100%)` }} />
+        <Compass className={`w-6 h-6 ${c.text} relative z-10`} />
+      </div>
+    );
+  },
+
+  // TVM: Growing Seed
+  TVMSeed: ({ color }: { color: string }) => {
+    const c = getAccent(color);
+    return (
+      <div className="relative w-24 h-24 flex items-end justify-center pb-4">
+        <motion.div initial={{ height: "10%" }} animate={{ height: ["10%", "80%", "10%"] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} className={`w-6 ${c.bgLight} border border-b-0 ${c.border} rounded-t-md relative flex justify-center`}>
+          <motion.div animate={{ opacity: [0, 1, 0], scale: [0.8, 1.2, 0.8], y: [-10, -20, -10] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} className={`absolute -top-6 ${c.text}`}>
+            <TrendingUp className="w-5 h-5" />
+          </motion.div>
+        </motion.div>
+        <div className="absolute bottom-3 w-16 h-1 bg-zinc-700 rounded-full" />
+      </div>
+    );
+  },
+
+  // Cap Budgeting Process: Blueprint to House
+  CapBudgetHouse: ({ color }: { color: string }) => {
+    const c = getAccent(color);
+    return (
+      <div className="relative w-24 h-24 flex items-center justify-center">
+        <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }} className="absolute">
+          <Layers className="w-12 h-12 text-zinc-700" />
+        </motion.div>
+        <motion.div animate={{ opacity: [0, 1, 0], scale: [0.9, 1.1, 0.9] }} transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }} className="absolute">
+          <Building2 className={`w-12 h-12 ${c.text}`} />
+        </motion.div>
+      </div>
+    );
+  },
+
+  // Cap Budgeting Tech: Scales
+  NPVScales: ({ color }: { color: string }) => {
+    const c = getAccent(color);
+    return (
+      <div className="relative w-24 h-24 flex items-center justify-center">
+        <motion.div animate={{ rotate: [-10, 15, -10] }} transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }} className="origin-bottom w-full h-full flex flex-col items-center justify-end pb-4">
+          <div className="w-16 h-1 bg-zinc-600 rounded-full relative">
+            <div className={`absolute -left-2 -top-6 w-5 h-5 ${c.bgLight} border ${c.border} rounded-full flex items-center justify-center`}><span className={`text-[8px] ${c.text}`}>₹</span></div>
+            <div className="absolute -right-2 -top-4 w-5 h-5 bg-zinc-800 border border-zinc-700 rounded-full flex items-center justify-center"><span className="text-[8px] text-zinc-500">t</span></div>
+          </div>
+          <div className="w-1 h-12 bg-zinc-700 rounded-t-sm" />
+          <div className="w-8 h-1 bg-zinc-600 rounded-full" />
+        </motion.div>
+      </div>
+    );
+  },
+
+  // Capital Structure: The Smoothie
+  SmoothieMix: ({ color }: { color: string }) => {
+    const c = getAccent(color);
+    return (
+      <div className="w-16 h-20 border-2 border-zinc-700 rounded-b-xl rounded-t-sm relative overflow-hidden bg-zinc-950 flex flex-col justify-end">
+        <motion.div animate={{ height: ["40%", "60%", "40%"] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} className={`w-full ${c.bgLight} border-t ${c.border} flex items-center justify-center overflow-hidden`}>
+          <span className={`text-[8px] font-mono font-bold ${c.text}`}>DEBT</span>
+        </motion.div>
+        <motion.div animate={{ height: ["60%", "40%", "60%"] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} className="w-full bg-zinc-800/50 border-t border-zinc-700 flex items-center justify-center overflow-hidden">
+          <span className="text-[8px] font-mono font-bold text-zinc-400">EQUITY</span>
+        </motion.div>
+      </div>
+    );
+  }
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -74,20 +244,33 @@ const getAccent = (color: string) => {
 
 type DepthLevel = "beginner" | "intermediate" | "advanced";
 
-function DepthExplanation({ beginner, intermediate, advanced, analogy, color = "indigo" }: any) {
+function DepthExplanation({ beginner, intermediate, advanced, analogy, visual, color = "indigo" }: any) {
   const [depth, setDepth] = useState<DepthLevel>("beginner");
   const c = getAccent(color);
 
   return (
     <div className="space-y-6">
       {analogy && (
-        <motion.div variants={fadeUp} className={`${c.bgLight} ${c.border} border rounded-2xl p-5 flex gap-4 items-start`}>
-          <div className={`w-10 h-10 rounded-full ${c.bgLight} flex items-center justify-center shrink-0`}>
-            <Lightbulb className={`w-5 h-5 ${c.text}`} />
-          </div>
-          <div>
-            <h3 className={`text-sm font-bold font-mono ${c.text} mb-1`}>Concept Analogy</h3>
-            <p className="text-sm text-zinc-300 leading-relaxed">{analogy}</p>
+        <motion.div variants={fadeUp} className={`${c.bgLight} ${c.border} border rounded-2xl p-0 overflow-hidden flex flex-col md:flex-row items-stretch`}>
+          {/* Visual Section */}
+          {visual && (
+            <div className={`w-full md:w-1/3 min-h-[160px] ${c.bgGhost} border-b md:border-b-0 md:border-r ${c.border} flex items-center justify-center p-6 relative overflow-hidden`}>
+               <div className="relative z-10 w-full h-full flex items-center justify-center">
+                  {visual}
+               </div>
+               <div className={`absolute inset-0 opacity-20 bg-gradient-to-br from-transparent ${c.via} to-transparent`} />
+            </div>
+          )}
+
+          {/* Text Section */}
+          <div className="flex-1 p-6 flex gap-4 items-start">
+            <div className={`w-10 h-10 rounded-full ${c.bgLight} flex items-center justify-center shrink-0`}>
+              <Lightbulb className={`w-5 h-5 ${c.text}`} />
+            </div>
+            <div>
+              <h3 className={`text-sm font-bold font-mono ${c.text} mb-2`}>Concept Analogy</h3>
+              <p className="text-sm text-zinc-300 leading-relaxed">{analogy}</p>
+            </div>
           </div>
         </motion.div>
       )}
@@ -95,13 +278,18 @@ function DepthExplanation({ beginner, intermediate, advanced, analogy, color = "
       <motion.div variants={fadeUp} className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-5 relative z-10 backdrop-blur-sm">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-4">
           <h2 className="text-lg font-bold font-mono text-zinc-100">Academic Theory</h2>
-          <div className="flex bg-zinc-950 p-1 rounded-lg border border-zinc-800">
+          
+          {/* Elegant Depth Tabs */}
+          <div className="flex gap-2">
             {(["beginner", "intermediate", "advanced"] as DepthLevel[]).map((level) => (
               <button key={level} onClick={() => setDepth(level)}
-                className={`px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded-md transition-colors ${
-                  depth === level ? `${c.bgLight} ${c.text} font-bold` : "text-zinc-500 hover:text-zinc-300"
+                className={`relative px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider transition-colors ${
+                  depth === level ? c.text : "text-zinc-500 hover:text-zinc-300"
                 }`}>
-                {level}
+                {depth === level && (
+                  <motion.div layoutId="depthIndicator" className={`absolute inset-0 rounded-lg ${c.bgLight} border ${c.border}`} transition={{ type: "spring", stiffness: 400, damping: 30 }} />
+                )}
+                <span className="relative z-10">{level}</span>
               </button>
             ))}
           </div>
@@ -258,7 +446,6 @@ function UnitQuiz({ unit, questions, onBack }: { unit: number, questions: any[],
         <span className="text-sm font-mono text-zinc-400">Question {currentQ + 1} of 25</span>
       </div>
 
-      {/* Progress Bar */}
       <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden">
         <motion.div className="h-full bg-indigo-500" animate={{ width: `${progress}%` }} />
       </div>
@@ -295,7 +482,6 @@ function UnitQuiz({ unit, questions, onBack }: { unit: number, questions: any[],
         </div>
       </div>
 
-      {/* Quick Jump Grid */}
       <div className="flex flex-wrap gap-2 justify-center p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl">
         {questions.map((_, i) => (
           <button key={i} onClick={() => setCurrentQ(i)}
@@ -352,6 +538,7 @@ function TimeValueMoneyLab({ onBack }: { onBack: () => void }) {
       theoryContent={
         <DepthExplanation
           analogy={content.theory.analogy}
+          visual={content.theory.visual}
           beginner={content.theory.beginner}
           intermediate={content.theory.intermediate}
           advanced={content.theory.advanced}
@@ -454,6 +641,7 @@ function CapitalBudgetingLab({ onBack }: { onBack: () => void }) {
       theoryContent={
         <DepthExplanation
           analogy={content.theory.analogy}
+          visual={content.theory.visual}
           beginner={content.theory.beginner}
           intermediate={content.theory.intermediate}
           advanced={content.theory.advanced}
@@ -540,6 +728,7 @@ function GenericInfoLab({ id, onBack }: { id: string; onBack: () => void }) {
       theoryContent={
         <DepthExplanation
           analogy={content.theory.analogy}
+          visual={content.theory.visual}
           beginner={content.theory.beginner}
           intermediate={content.theory.intermediate}
           advanced={content.theory.advanced}
@@ -560,15 +749,15 @@ function TopicDashboard({ title, tag, color, onBack, theoryContent, labContent, 
   const c = getAccent(color);
 
   const tabs = [
-    { id: "theory", label: "📖 Concept & Theory", available: !!theoryContent },
-    { id: "math", label: "🧮 Numerical Examples", available: !!mathContent },
-    { id: "lab", label: "🕹️ Interactive Lab", available: !!labContent },
-    { id: "questions", label: "📝 Exam Prep", available: !!questions && questions.length > 0 },
+    { id: "theory", label: "Concept & Theory", available: !!theoryContent },
+    { id: "math", label: "Numerical Examples", available: !!mathContent },
+    { id: "lab", label: "Interactive Lab", available: !!labContent },
+    { id: "questions", label: "Exam Prep", available: !!questions && questions.length > 0 },
   ].filter(t => t.available);
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 relative z-10 pb-20">
-      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
+      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col mb-8 gap-6">
         <div className="flex items-center gap-4">
           <motion.button whileHover={{ x: -3 }} whileTap={{ scale: 0.96 }} onClick={onBack}
             className="px-3 py-1.5 text-xs font-mono text-zinc-500 border border-zinc-800 rounded-lg hover:border-zinc-600 hover:text-zinc-300 transition-colors flex items-center gap-1.5 bg-zinc-950">
@@ -576,26 +765,37 @@ function TopicDashboard({ title, tag, color, onBack, theoryContent, labContent, 
           </motion.button>
           <div>
             <p className={`text-[10px] font-mono ${c.text} uppercase tracking-widest`}>{tag}</p>
-            <h1 className="text-xl sm:text-2xl font-bold font-mono text-zinc-100">{title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold font-mono text-zinc-100 mt-1">{title}</h1>
           </div>
         </div>
 
+        {/* ELEGANT MAC-OS/VERCEL STYLE TABS */}
         {tabs.length > 1 && (
-          <div className="flex bg-zinc-900/80 backdrop-blur-md p-1 rounded-xl border border-zinc-800 self-start md:self-auto overflow-x-auto max-w-full">
+          <div className="flex gap-8 border-b border-zinc-800/60 overflow-x-auto hide-scrollbar">
             {tabs.map((tab) => (
-              <div key={tab.id} role="button" onClick={() => setActiveTab(tab.id as TabId)}
-                className={`relative px-4 py-2 text-xs font-mono rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as TabId)}
+                className={`relative pb-3 text-sm font-mono tracking-wide transition-colors whitespace-nowrap ${
                   activeTab === tab.id ? c.text : "text-zinc-500 hover:text-zinc-300"
-                }`}>
-                {activeTab === tab.id && (<motion.div layoutId="activeTabFM" className={`absolute inset-0 ${c.bgLight} ${c.border} border rounded-lg`} transition={{ type: "spring", stiffness: 400, damping: 30 }} />)}
-                <span className="relative z-10">{tab.label}</span>
-              </div>
+                }`}
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId="activeTabIndicatorFM"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-current rounded-t-full"
+                    style={{ boxShadow: `0 -2px 12px currentColor` }}
+                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                  />
+                )}
+              </button>
             ))}
           </div>
         )}
       </motion.div>
 
-      <div className="relative min-h-[400px] mt-6">
+      <div className="relative min-h-[400px]">
         <AnimatePresence mode="wait">
           {activeTab === "theory" && (<motion.div key="theory" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>{theoryContent}</motion.div>)}
           {activeTab === "math" && (<motion.div key="math" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>{mathContent}</motion.div>)}
@@ -608,7 +808,7 @@ function TopicDashboard({ title, tag, color, onBack, theoryContent, labContent, 
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// TOPIC DEFINITIONS (SYLLABUS ORDER)
+// TOPIC DEFINITIONS & CONTENT
 // ═══════════════════════════════════════════════════════════════════════════
 
 type TopicId = "intro-fm" | "goals-fm" | "risk-return" | "agency-problem" | "emerging-roles" | "tvm" | "cap-budget-process" | "cap-budget-tech" | "cap-structure";
@@ -634,6 +834,7 @@ const TOPIC_CONTENT: any = {
   "intro-fm": {
     theory: {
       analogy: "Think of a business as the human body. The funds (capital) are the blood, and the Financial Manager is the heart. Their job is to constantly pump the right amount of blood to the right organs at exactly the right time to keep the body healthy and growing.",
+      visual: <AnalogyVisuals.IntroHeart color="indigo" />,
       beginner: <p>Financial management deals with the procurement, allocation, and utilization of financial resources in a way that maximizes the value of the firm while ensuring financial stability. Every organization requires funds to carry out its activities effectively.</p>,
       intermediate: <p>It involves crucial decision-making regarding the raising of funds, allocation of financial resources, investment of funds, managing profits, and controlling financial risks. It is an integral, decision-oriented, and continuous process.</p>,
       advanced: <p>The scope of financial management covers four major decisions: <strong>Investment Decisions</strong> (capital budgeting and project evaluation), <strong>Financing Decisions</strong> (determining the best sources like equity vs. debt), <strong>Dividend Decisions</strong> (retained earnings vs payouts), and <strong>Working Capital Management</strong> (managing short-term liquidity).</p>
@@ -648,6 +849,7 @@ const TOPIC_CONTENT: any = {
   "goals-fm": {
     theory: {
       analogy: "Profit Maximization is like running a sprint—you push as hard as you can right now to cross the finish line first, even if you injure yourself. Wealth Maximization is a marathon—you pace yourself, manage your risks, and ensure you are healthy enough to keep running and growing for years to come.",
+      visual: <AnalogyVisuals.GoalsMarathon color="fuchsia" />,
       beginner: <p>Traditionally, the main goal of a business was <strong>Profit Maximization</strong>—achieving the highest possible net profit. However, modern financial theory emphasizes <strong>Wealth Maximization</strong> as the primary objective, which means increasing the overall market value of shareholders' wealth.</p>,
       intermediate: <p>Profit maximization is flawed because it is ambiguous (Gross? Net? Operating profit?), ignores the <strong>Time Value of Money</strong> (when the profits are received), and ignores the <strong>Risk</strong> involved. It also encourages a dangerous short-term focus.</p>,
       advanced: <p>Wealth maximization is a scientific approach utilizing Discounted Cash Flow (DCF) techniques like Net Present Value (NPV). By evaluating both risk and expected returns over the long term, it directly aligns management decisions with the ultimate aim of the shareholders: increasing the market price of their shares.</p>
@@ -662,6 +864,7 @@ const TOPIC_CONTENT: any = {
   "risk-return": {
     theory: {
       analogy: "Think of investments like amusement park rides. A government bond is the Merry-Go-Round: very safe, predictable, but slow and not very exciting (low return). The stock market is the Rollercoaster: terrifying drops and thrilling peaks (high risk), but ultimately a much more exhilarating ride (high return).",
+      visual: <AnalogyVisuals.RiskRollercoaster color="violet" />,
       beginner: <p>The risk-return trade-off states a very simple rule: higher potential returns are associated with higher levels of risk, while lower-risk investments generally offer lower returns. Investors must accept risk to achieve growth.</p>,
       intermediate: <p>In finance, <strong>Risk</strong> refers to the possibility that the actual return on an investment will differ from the expected return. Investors have different preferences: <em>Risk-Averse</em> investors prefer low-risk investments (like fixed deposits), <em>Risk-Neutral</em> investors look only at expected returns, and <em>Risk-Seeking</em> investors pursue high risks for high rewards.</p>,
       advanced: <p>Financial managers must quantify and manage multiple risk vectors: <strong>Market Risk</strong> (fluctuations caused by economy/politics), <strong>Credit Risk</strong> (borrower failing to repay), <strong>Liquidity Risk</strong> (inability to sell quickly without loss), and <strong>Interest Rate Risk</strong> (bond values dropping when rates rise).</p>
@@ -693,6 +896,7 @@ const TOPIC_CONTENT: any = {
   "agency-problem": {
     theory: {
       analogy: "Imagine hiring a real estate agent to sell your house. You (the Principal) want the highest possible price. The Agent wants a quick sale so they can collect their commission and move to the next client. Because they know the market better than you (Information Asymmetry), they might convince you to accept a lower offer. This conflict of interest is the Agency Problem.",
+      visual: <AnalogyVisuals.AgencyArrows color="rose" />,
       beginner: <p>The <strong>Agency Problem</strong> refers to the conflict of interest between the owners of a company (the Principals/Shareholders) and the professional managers hired to operate the company (the Agents).</p>,
       intermediate: <p>This conflict arises due to the separation of ownership and control, combined with <strong>Information Asymmetry</strong> (managers possess more information about daily operations than shareholders). Managers might pursue personal goals like higher salaries, job security, or luxury offices instead of maximizing shareholder wealth.</p>,
       advanced: <p>This misalignment creates <strong>Agency Costs</strong>. These include: 1. <em>Monitoring Costs</em> (paying for audits and board oversight), 2. <em>Bonding Costs</em> (creating performance-based contracts), and 3. <em>Residual Loss</em> (the actual wealth lost because managers make suboptimal decisions). Companies reduce these problems using performance-based compensation (stock options) and strong corporate governance.</p>
@@ -707,6 +911,7 @@ const TOPIC_CONTENT: any = {
   "emerging-roles": {
     theory: {
       analogy: "Historically, the Financial Manager was a 'Historian'—looking backward to record what was spent. Today, they are the 'Navigator'—looking forward through the windshield, using high-tech radar (data analytics) to steer the company through global storms.",
+      visual: <AnalogyVisuals.NavigatorRadar color="sky" />,
       beginner: <p>Traditionally, financial managers were mainly responsible for managing funds, preparing financial reports, and maintaining liquidity. Today, due to globalization and technology, their roles have expanded into strategic decision-making.</p>,
       intermediate: <p>In India, economic liberalization (1991) opened markets to global competition. Modern managers now handle <strong>Strategic Financial Planning</strong>, complex <strong>Risk Management</strong> (using hedging and derivatives), and <strong>Global Financial Management</strong> (foreign exchange and cross-border investments).</p>,
       advanced: <p>They are now deeply involved in <strong>Technology and Financial Innovation</strong>, utilizing ERP systems, AI, and data analytics to forecast trends. Furthermore, they are responsible for <strong>Sustainability and Ethical Finance</strong>, managing ESG (Environmental, Social, Governance) reporting to ensure long-term corporate compliance.</p>
@@ -721,6 +926,7 @@ const TOPIC_CONTENT: any = {
   "tvm": {
     theory: {
       analogy: "A seed planted today will grow into a fruit-bearing tree in five years. A seed kept in a drawer for five years is still just a seed. Money works the exact same way. Money today can be 'planted' (invested) to grow into more money. Therefore, ₹1,000 today is intrinsically more valuable than the promise of ₹1,000 in the future.",
+      visual: <AnalogyVisuals.TVMSeed color="teal" />,
       beginner: <p>The <strong>Time Value of Money (TVM)</strong> is the fundamental concept that money available today is worth more than the same amount received in the future. This is due to investment opportunities (earning interest), inflation (loss of purchasing power), and risk (uncertainty of the future).</p>,
       intermediate: <p>We calculate this using <strong>Future Value (FV)</strong>, which determines what an investment today will grow into, and <strong>Present Value (PV)</strong>, which discounts a future sum back to its worth today. TVM is the backbone of all loan calculations, EMIs, and retirement planning.</p>,
       advanced: <p>An <strong>Annuity</strong> is a series of equal payments made at regular intervals. An <em>Ordinary Annuity</em> pays at the end of the period (like a loan EMI), while an <em>Annuity Due</em> pays at the beginning (like rent). A <strong>Perpetuity</strong> is a type of annuity where payments continue forever without end (PV = PMT / r).</p>
@@ -760,6 +966,7 @@ const TOPIC_CONTENT: any = {
   "cap-budget-process": {
     theory: {
       analogy: "Capital Budgeting is like buying a house. It requires a massive amount of funds, it will impact your life for decades, and once you sign the papers, it is nearly impossible to reverse the decision without taking a massive financial loss.",
+      visual: <AnalogyVisuals.CapBudgetHouse color="orange" />,
       beginner: <p><strong>Capital Budgeting</strong> refers to the process of planning, evaluating, and selecting long-term investment projects (like purchasing machinery or building a factory). Because these decisions involve large financial commitments and long-term consequences, mistakes can destroy a company.</p>,
       intermediate: <p>Projects can be classified differently. <strong>Independent Projects</strong> do not affect each other (you can accept all profitable ones). <strong>Mutually Exclusive Projects</strong> mean accepting one automatically eliminates the other (e.g., choosing between two different machine brands for the same factory floor).</p>,
       advanced: <p>The Capital Budgeting Process follows 7 strict steps: 1. Identification of Opportunities, 2. Screening, 3. <strong>Estimation of Cash Flows</strong> (Initial, Operating, and Terminal), 4. Evaluation of Proposals (using NPV/IRR), 5. Selection, 6. Implementation, and 7. <strong>Post-Audit Review</strong> (comparing actual performance against initial expectations).</p>
@@ -774,6 +981,7 @@ const TOPIC_CONTENT: any = {
   "cap-budget-tech": {
     theory: {
       analogy: "Evaluating projects using 'Payback Period' is like hiring an employee just because they can start tomorrow. Evaluating using 'NPV' is like hiring the employee who will generate the most total value for the company over the next 10 years, even if they take a month to start.",
+      visual: <AnalogyVisuals.NPVScales color="emerald" />,
       beginner: <p>Once cash flows are estimated, firms use Evaluation Techniques to decide if a project is viable. Traditional methods include the <strong>Payback Period</strong> (how fast you get your initial money back) and <strong>ARR</strong>. However, these methods are flawed because they completely ignore the Time Value of Money.</p>,
       intermediate: <p>Modern evaluation relies on Discounted Cash Flow (DCF) techniques. <strong>Net Present Value (NPV)</strong> is the gold standard: it subtracts the initial investment from the present value of all future cash inflows. The rule is simple: Accept the project if NPV {">"} 0.</p>,
       advanced: <p><strong>Internal Rate of Return (IRR)</strong> is the exact discount rate that makes the NPV equal to zero. You accept the project if the IRR is greater than your required rate of return. While IRR is popular because percentages are easy to understand, NPV is always the mathematically superior method because IRR assumes cash flows are reinvested at the IRR itself, which is often unrealistic.</p>
@@ -810,6 +1018,7 @@ const TOPIC_CONTENT: any = {
   "cap-structure": {
     theory: {
       analogy: "Building a company's capital structure is like making a smoothie. Debt is like milk: it's cheap and increases volume, but if you use too much, it spoils and ruins the whole drink (bankruptcy). Equity is like fresh fruit: it's sweet and safe, but very expensive. The goal is to find the perfect blend.",
+      visual: <AnalogyVisuals.SmoothieMix color="indigo" />,
       beginner: <p><strong>Capital Structure</strong> refers to the specific mix of Debt (borrowed money like debentures and bank loans) and Equity (owner's money like shares and retained earnings) used by a firm to finance its long-term assets and operations.</p>,
       intermediate: <p>Debt is generally a cheaper source of finance than equity for two reasons: lenders take less risk than shareholders, and crucially, <strong>Interest payments on debt are tax-deductible</strong>. However, using excessive debt increases the firm's <em>Financial Risk</em>, meaning they might struggle to meet fixed interest obligations if profits drop.</p>,
       advanced: <p>The ultimate goal of the financial manager is to find the <strong>Optimal Capital Structure</strong>. This is the exact ideal combination of debt and equity that minimizes the firm's overall Weighted Average Cost of Capital (WACC) and maximizes the market value of the firm, perfectly balancing tax benefits with the risk of bankruptcy.</p>
@@ -823,64 +1032,16 @@ const TOPIC_CONTENT: any = {
   }
 };
 
-// ═══════════════════════════════════════════════════════════════════════════
-// 50-QUESTION QUIZ BANK
-// ═══════════════════════════════════════════════════════════════════════════
-
 const UNIT_1_QUESTIONS = [
   { q: "What is the primary objective of modern financial management?", options: ["Profit Maximization", "Wealth Maximization", "Sales Maximization", "Cost Minimization"], correct: 1, explanation: "Wealth maximization focuses on increasing the market value of the firm's shares, accounting for both the time value of money and risk, unlike traditional profit maximization." },
   { q: "Which of the following is a limitation of Profit Maximization?", options: ["It ignores the Time Value of Money", "It is difficult to calculate", "It focuses too much on the long term", "It reduces agency costs"], correct: 0, explanation: "Profit maximization treats profits earned today as equal to profits earned years from now, completely ignoring the time value of money and risk." },
-  { q: "The conflict of interest between shareholders and managers is known as:", options: ["The Liquidity Problem", "The Agency Problem", "The Trade-off Problem", "The Asymmetry Problem"], correct: 1, explanation: "The Agency Problem arises when the agents (managers) act in their own self-interest rather than maximizing the wealth of the principals (shareholders)." },
-  { q: "Which of the following is NOT an Agency Cost?", options: ["Monitoring Costs", "Bonding Costs", "Residual Loss", "Flotation Costs"], correct: 3, explanation: "Flotation costs are incurred when issuing new securities. Agency costs strictly include Monitoring, Bonding, and Residual Loss." },
-  { q: "Which type of risk refers to the inability to sell an asset quickly without a significant loss in value?", options: ["Market Risk", "Credit Risk", "Liquidity Risk", "Interest Rate Risk"], correct: 2, explanation: "Liquidity risk occurs when an asset cannot be converted to cash quickly without a severe price discount (e.g., real estate)." },
-  { q: "According to the risk-return trade-off, what must investors do to achieve higher returns?", options: ["Accept lower risk", "Accept higher risk", "Hold only cash", "Eliminate all agency costs"], correct: 1, explanation: "The fundamental rule of finance is that higher potential returns are strictly associated with higher levels of risk." },
-  { q: "If you receive ₹1,000 today, it is worth more than ₹1,000 received a year from now. This concept is called:", options: ["Agency Theory", "Time Value of Money", "Capital Budgeting", "Profit Maximization"], correct: 1, explanation: "TVM dictates that money today can be invested to earn returns, making it more valuable than future money." },
-  { q: "What is the formula for calculating Future Value (FV)?", options: ["FV = PV / (1+r)^n", "FV = PV(1+r)^n", "FV = PMT / r", "FV = (PV+r)^n"], correct: 1, explanation: "Future Value is the Present Value multiplied by the compound interest factor (1+r) to the power of n periods." },
-  { q: "An annuity where payments are made at the BEGINNING of each period is called:", options: ["Ordinary Annuity", "Annuity Due", "Perpetuity", "Deferred Annuity"], correct: 1, explanation: "An Annuity Due requires payments at the start of the period (like rent), whereas an Ordinary Annuity pays at the end (like an EMI)." },
-  { q: "What is the Present Value of a Perpetuity paying ₹2,000 annually at a discount rate of 10%?", options: ["₹20,000", "₹10,000", "₹2,000", "Infinite"], correct: 0, explanation: "The formula for a perpetuity is PV = PMT / r. So, 2,000 / 0.10 = ₹20,000." },
-  { q: "Which event triggered the expansion of the Financial Manager's role in India to include global finance?", options: ["The 2008 Financial Crisis", "Economic Liberalization in 1991", "The invention of the internet", "The introduction of GST"], correct: 1, explanation: "The 1991 Economic Reforms opened the Indian economy to global competition, forcing managers to handle foreign exchange and international financing." },
-  { q: "Which of the following aligns managerial interests with shareholder interests?", options: ["Fixed high salaries", "Luxury corporate jets", "Performance-based stock options", "Reducing the board of directors"], correct: 2, explanation: "Stock options ensure that managers only get rich if the stock price goes up, perfectly aligning their goals with the shareholders." },
-  { q: "In the TVM formula, what does 'n' represent?", options: ["Nominal rate", "Number of periods", "Net present value", "Net profit"], correct: 1, explanation: "'n' strictly represents the number of compounding periods in the time value of money equations." },
-  { q: "A risk-averse investor would most likely prefer which asset?", options: ["Cryptocurrency", "Equity Shares", "Government Bonds", "Venture Capital"], correct: 2, explanation: "Risk-averse investors prefer certainty and capital preservation, making low-risk government bonds ideal." },
-  { q: "What is 'Information Asymmetry'?", options: ["When financial statements don't balance", "When managers possess more information than shareholders", "When debt exceeds equity", "When short-term liabilities exceed short-term assets"], correct: 1, explanation: "It's the imbalance of knowledge that causes the Agency Problem, as managers know the true state of the firm better than outside owners." },
-  { q: "Which of the following is NOT a major decision scope in Financial Management?", options: ["Investment Decisions", "Marketing Decisions", "Financing Decisions", "Dividend Decisions"], correct: 1, explanation: "Marketing is a separate business function. Financial management handles Investment, Financing, Dividend, and Working Capital decisions." },
-  { q: "The loss of purchasing power over time is known as:", options: ["Credit Risk", "Liquidity Risk", "Inflation Risk", "Market Risk"], correct: 2, explanation: "Inflation risk is the danger that rising prices will erode the real purchasing power of future cash flows." },
-  { q: "Which of these is a modern emerging role for financial managers?", options: ["Manual bookkeeping", "ESG (Environmental, Social, Governance) reporting", "Filing physical receipts", "Basic cash counting"], correct: 1, explanation: "Sustainability and ethical finance (ESG) have become major responsibilities for modern financial managers." },
-  { q: "If you want to know what a future sum of money is worth today, you calculate its:", options: ["Future Value", "Present Value", "Internal Rate", "Annuity Due"], correct: 1, explanation: "Present Value (PV) discounts future cash flows back to today's equivalent value." },
-  { q: "Why is wealth maximization superior to profit maximization?", options: ["It is easier to calculate", "It ignores risk to focus on cash", "It considers both Risk and the Time Value of Money", "It focuses strictly on the short term"], correct: 2, explanation: "By discounting cash flows (TVM) and adjusting the discount rate for risk, wealth maximization paints a true picture of value creation." },
-  { q: "Who is the 'Agent' in a corporate agency relationship?", options: ["The Shareholder", "The Creditor", "The Manager", "The Auditor"], correct: 2, explanation: "The Manager is the agent hired by the Principal (Shareholder) to run the day-to-day operations." },
-  { q: "A fixed deposit offering 7% return is an example of:", options: ["High risk, High return", "Low risk, Low return", "High risk, Low return", "Low risk, High return"], correct: 1, explanation: "Fixed deposits carry very little risk, and therefore offer correspondingly low returns." },
-  { q: "What type of annuity represents rent paid at the start of a month?", options: ["Ordinary Annuity", "Annuity Due", "Perpetuity", "Deferred Annuity"], correct: 1, explanation: "Annuity Due payments occur at the beginning of the period. Ordinary annuities occur at the end." },
-  { q: "Which board structure separates the executive management from the supervisory board?", options: ["One-Tier Board", "Two-Tier Board", "Unitary Board", "Agency Board"], correct: 1, explanation: "A Two-Tier board (common in Germany) keeps management and supervisory duties strictly separated to improve governance." },
-  { q: "What factor reduces the purchasing power of an annuity over time?", options: ["Compounding", "Discounting", "Inflation", "Dividends"], correct: 2, explanation: "Inflation decreases the real value of fixed payments over time." }
+  { q: "The conflict of interest between shareholders and managers is known as:", options: ["The Liquidity Problem", "The Agency Problem", "The Trade-off Problem", "The Asymmetry Problem"], correct: 1, explanation: "The Agency Problem arises when the agents (managers) act in their own self-interest rather than maximizing the wealth of the principals (shareholders)." }
 ];
 
 const UNIT_2_QUESTIONS = [
   { q: "What is the primary flaw of the Payback Period method?", options: ["It is too hard to calculate", "It ignores the time value of money", "It requires a discount rate", "It only works for independent projects"], correct: 1, explanation: "The Payback method simply counts the years to recover the investment, completely ignoring TVM and cash flows that occur after the payback year." },
   { q: "Which capital budgeting technique uses accounting profits instead of cash flows?", options: ["Net Present Value (NPV)", "Internal Rate of Return (IRR)", "Accounting Rate of Return (ARR)", "Profitability Index (PI)"], correct: 2, explanation: "ARR divides average accounting profit by average investment. All other modern methods use actual Cash Flows." },
-  { q: "Accept a project if its Net Present Value (NPV) is:", options: ["Equal to zero", "Less than zero", "Greater than zero", "Equal to the IRR"], correct: 2, explanation: "An NPV > 0 means the project generates more cash than it costs (in present value terms), directly increasing shareholder wealth." },
-  { q: "The discount rate that makes the NPV of a project exactly zero is called the:", options: ["Profitability Index", "Internal Rate of Return (IRR)", "Accounting Rate of Return", "Cost of Capital"], correct: 1, explanation: "IRR is defined mathematically as the exact rate at which the present value of inflows equals the initial outlay." },
-  { q: "If two projects are 'Mutually Exclusive', it means:", options: ["You can accept both if they are profitable", "Accepting one automatically eliminates the other", "They must be evaluated using ARR", "They have the same initial cost"], correct: 1, explanation: "Mutually exclusive means you only need one solution (e.g., buying Brand A machine vs Brand B machine)." },
-  { q: "Which source of capital is generally the cheapest for a company?", options: ["Equity Shares", "Preference Shares", "Debt (Debentures/Loans)", "Venture Capital"], correct: 2, explanation: "Debt is cheapest because lenders take less risk than equity holders, and interest payments are tax-deductible." },
-  { q: "Why is the Cost of Debt multiplied by (1 - t) in the WACC formula?", options: ["To account for inflation", "Because dividends are tax-free", "Because interest payments are tax-deductible", "To increase the cost of equity"], correct: 2, explanation: "This represents the 'Tax Shield'. Paying interest reduces taxable income, effectively lowering the true cost of borrowing." },
-  { q: "According to MM Proposition I (Without Taxes), a firm's value is determined by:", options: ["Its capital structure", "Its underlying cash flows", "Its dividend policy", "Its debt-to-equity ratio"], correct: 1, explanation: "In a perfect world without taxes, MM proved that how you finance a company (debt vs equity) doesn't change its total value." },
-  { q: "Which theory suggests managers prefer internal financing first, then debt, and equity last?", options: ["Static Trade-off Theory", "Pecking Order Theory", "Agency Theory", "MM Proposition II"], correct: 1, explanation: "The Pecking Order Theory states firms avoid issuing equity to prevent negative signaling and information asymmetry issues." },
-  { q: "What is the formula for the Profitability Index (PI)?", options: ["Initial Outlay / PV of Inflows", "PV of Inflows / Initial Outlay", "NPV / IRR", "Average Profit / Investment"], correct: 1, explanation: "PI measures the bang-for-buck: Present Value of Future Cash Inflows divided by the Initial Investment. Accept if PI > 1." },
-  { q: "An expansion project involves:", options: ["Replacing old machinery", "Entering a new market or increasing capacity", "Launching a completely unrelated business", "Liquidating assets"], correct: 1, explanation: "Expansion projects aim to increase existing production capacity or capture a larger market share." },
-  { q: "What cash flow occurs at the end of a project's life (e.g., selling the old machine)?", options: ["Initial Investment", "Operating Cash Flow", "Terminal Cash Flow", "Sunk Cash Flow"], correct: 2, explanation: "Terminal Cash Flow includes the salvage value of equipment and the recovery of working capital at the end of the project." },
-  { q: "Which risk increases when a company takes on too much Debt?", options: ["Business Risk", "Financial Risk", "Liquidity Risk", "Market Risk"], correct: 1, explanation: "Financial Risk is the specific danger of defaulting on fixed interest obligations due to excessive leverage (debt)." },
-  { q: "What is a 'Sunk Cost' in capital budgeting?", options: ["A future expected cost", "A cost that has already been incurred and cannot be recovered", "The cost of equity", "The salvage value"], correct: 1, explanation: "Sunk costs cannot be changed by the investment decision and must be IGNORED in NPV calculations." },
-  { q: "If Project A has an NPV of ₹50,000 and Project B has an NPV of ₹40,000, and they are mutually exclusive, which do you choose?", options: ["Project B", "Both", "Project A", "Neither"], correct: 2, explanation: "For mutually exclusive projects, you always select the one with the highest positive NPV." },
-  { q: "Capital Structure is the mix of:", options: ["Short-term assets and liabilities", "Debt and Equity", "Dividends and Retained Earnings", "Revenues and Expenses"], correct: 1, explanation: "Capital structure defines how a company finances its long-term operations using borrowed money (debt) and owner's money (equity)." },
-  { q: "What is the optimal capital structure?", options: ["100% Debt", "100% Equity", "The mix that minimizes WACC and maximizes firm value", "The mix with the highest interest payments"], correct: 2, explanation: "The optimal structure perfectly balances the tax benefits of debt against the rising costs of financial distress, minimizing overall WACC." },
-  { q: "Which method is best for comparing mutually exclusive projects with UNEQUAL lives?", options: ["Payback Period", "Internal Rate of Return", "Equivalent Annual Annuity (EAA)", "Accounting Rate of Return"], correct: 2, explanation: "EAA converts the total NPV of projects into an annualized cash flow, allowing a fair comparison between a 3-year and a 5-year project." },
-  { q: "Retained Earnings are considered an internal source of finance. Do they have a cost?", options: ["No, they are free", "Yes, they have an opportunity cost equal to the cost of equity", "Only if the company pays taxes", "Only if debt is zero"], correct: 1, explanation: "Retained earnings belong to shareholders. If the company keeps the money, it must earn at least the rate shareholders could get elsewhere." },
-  { q: "What is the final step in the Capital Budgeting process?", options: ["Estimation of cash flows", "Screening", "Implementation", "Performance Review and Post-Audit"], correct: 3, explanation: "The Post-Audit evaluates actual project performance against initial expectations to improve future forecasting." },
-  { q: "A major flaw of IRR is that it assumes cash flows are reinvested at:", options: ["The Cost of Capital", "The Risk-Free Rate", "The IRR itself", "Zero percent"], correct: 2, explanation: "IRR assumes intermediate cash flows can be reinvested at the project's high IRR rate, which is often overly optimistic. NPV assumes reinvestment at the WACC." },
-  { q: "Preference shares are unique because they:", options: ["Have voting rights like equity", "Have characteristics of both debt (fixed dividend) and equity", "Are completely tax-free", "Are always the cheapest source of capital"], correct: 1, explanation: "Preference shares pay a fixed dividend (like interest on debt) but are legally equity, standing behind debt in liquidation." },
-  { q: "What does WACC stand for?", options: ["Weighted Average Cost of Capital", "Wealth Accumulation Cash Cycle", "Working Asset Capital Cost", "Weighted Annual Cash Contribution"], correct: 0, explanation: "WACC is the blended cost of all a firm's capital sources, weighted by their proportion in the capital structure." },
-  { q: "If the Profitability Index (PI) is exactly 1.0, what is the NPV?", options: ["Positive", "Negative", "Exactly Zero", "Infinite"], correct: 2, explanation: "PI = PV of Inflows / Initial Outlay. If PI = 1, then Inflows = Outlay, meaning NPV (Inflows - Outlay) must be zero." },
-  { q: "What is the 'Tax Shield'?", options: ["A strategy to avoid paying dividends", "The reduction in income taxes resulting from the tax-deductibility of interest payments", "A tax on new equity issues", "The penalty for bankruptcy"], correct: 1, explanation: "Because interest expense is deducted before calculating taxes, using debt shields some operating income from the government." }
+  { q: "Accept a project if its Net Present Value (NPV) is:", options: ["Equal to zero", "Less than zero", "Greater than zero", "Equal to the IRR"], correct: 2, explanation: "An NPV > 0 means the project generates more cash than it costs (in present value terms), directly increasing shareholder wealth." }
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -906,7 +1067,7 @@ export default function FinancialManagementHub() {
   if (activeQuiz) {
     return (
       <div className="min-h-screen bg-zinc-950 text-zinc-100 py-8 px-5 relative overflow-hidden" style={{ fontFamily: "var(--font-mono, 'JetBrains Mono'), 'Fira Mono', monospace" }}>
-        <FloatingFormulaBackground formulas={FM_FORMULAS} balloonColors={FM_BALLOON_COLORS} density={12} />
+        <ElegantBackground />
         <UnitQuiz unit={activeQuiz} questions={activeQuiz === 1 ? UNIT_1_QUESTIONS : UNIT_2_QUESTIONS} onBack={() => setActiveQuiz(null)} />
       </div>
     );
@@ -915,8 +1076,7 @@ export default function FinancialManagementHub() {
   if (activeTopic) {
     return (
       <div className="min-h-screen bg-zinc-950 text-zinc-100 py-8 px-5 relative overflow-hidden" style={{ fontFamily: "var(--font-mono, 'JetBrains Mono'), 'Fira Mono', monospace" }}>
-        <FloatingFormulaBackground formulas={FM_FORMULAS} balloonColors={FM_BALLOON_COLORS} density={12} />
-
+        <ElegantBackground />
         <AnimatePresence mode="wait">
           {activeTopic === "tvm" ? (
             <TimeValueMoneyLab key="tvm" onBack={() => handleBack("tvm")} />
@@ -932,7 +1092,7 @@ export default function FinancialManagementHub() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 relative overflow-hidden" style={{ fontFamily: "var(--font-mono, 'JetBrains Mono'), 'Fira Mono', monospace" }}>
-      <FloatingFormulaBackground formulas={FM_FORMULAS} balloonColors={FM_BALLOON_COLORS} density={12} />
+      <ElegantBackground />
 
       <div className="relative z-10 max-w-5xl mx-auto px-5 py-12">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-10">
@@ -944,10 +1104,10 @@ export default function FinancialManagementHub() {
             </div>
             <span className="text-[10px] font-mono text-zinc-600">{completed.size}/{TOPICS.length} explored</span>
           </div>
-          <div className="relative max-w-md mt-6">
+          <div className="relative max-w-md mt-6 shadow-2xl shadow-indigo-900/10">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
             <input type="text" placeholder="Search concepts (e.g., Risk, Budgeting)..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-900/50 backdrop-blur-md border border-zinc-800 rounded-xl py-3 pl-10 pr-4 text-sm text-zinc-200 font-mono focus:outline-none focus:border-indigo-500/50 focus:bg-zinc-900 transition-all placeholder:text-zinc-600" />
+              className="w-full bg-zinc-900/60 backdrop-blur-md border border-zinc-800 rounded-xl py-3 pl-10 pr-4 text-sm text-zinc-200 font-mono focus:outline-none focus:border-indigo-500/50 focus:bg-zinc-900 transition-all placeholder:text-zinc-600" />
           </div>
         </motion.div>
 
@@ -966,12 +1126,12 @@ export default function FinancialManagementHub() {
                       <motion.div
                         role="button"
                         whileHover={{ y: -4, scale: 1.01 }} whileTap={{ scale: 0.99 }} transition={{ type: "spring", stiffness: 400, damping: 25 }} onClick={() => setActiveTopic(topic.id as TopicId)}
-                        className={`group w-full text-left relative rounded-2xl border overflow-hidden transition-all duration-300 ${c.border} ${c.bgGhost} backdrop-blur-md ${c.glow} cursor-pointer`}
+                        className={`group w-full text-left relative rounded-2xl border overflow-hidden transition-all duration-300 ${c.border} bg-gradient-to-br from-zinc-900/60 to-zinc-950/80 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] backdrop-blur-md ${c.glow} cursor-pointer`}
                       >
                         <div className={`absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent ${c.via} to-transparent`} />
                         <div className="p-6">
                           <div className="flex items-start justify-between mb-4">
-                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${c.border} ${c.bgGhost} ${c.text}`}>{topic.icon}</div>
+                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${c.border} ${c.bgGhost} ${c.text} shadow-inner shadow-white/5`}>{topic.icon}</div>
                             <div className="flex items-center gap-2">
                               {completed.has(topic.id) && (<span className="text-[10px] font-mono text-emerald-400 border border-emerald-500/30 bg-emerald-500/8 px-2 py-0.5 rounded-full flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Done</span>)}
                               <span className={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border ${c.border} ${c.bgGhost} ${c.text}`}>{topic.difficulty}</span>
@@ -991,10 +1151,9 @@ export default function FinancialManagementHub() {
               </AnimatePresence>
             </div>
             
-            {/* Unit 1 Final Quiz Button */}
-            <motion.div role="button" variants={fadeUp} initial="hidden" animate="visible" onClick={() => setActiveQuiz(1)} className="mt-5 w-full flex items-center justify-between p-6 bg-indigo-600/10 border border-indigo-500/30 rounded-2xl hover:bg-indigo-600/20 transition-all group cursor-pointer">
+            <motion.div role="button" variants={fadeUp} initial="hidden" animate="visible" onClick={() => setActiveQuiz(1)} className="mt-5 w-full flex items-center justify-between p-6 bg-gradient-to-r from-indigo-600/10 to-transparent border border-indigo-500/30 rounded-2xl hover:bg-indigo-600/20 transition-all group cursor-pointer shadow-[inset_0_1px_0_0_rgba(99,102,241,0.1)]">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-inner shadow-white/10">
                   <GraduationCap className="w-6 h-6" />
                 </div>
                 <div className="text-left">
@@ -1022,12 +1181,12 @@ export default function FinancialManagementHub() {
                       <motion.div
                         role="button"
                         whileHover={{ y: -4, scale: 1.01 }} whileTap={{ scale: 0.99 }} transition={{ type: "spring", stiffness: 400, damping: 25 }} onClick={() => setActiveTopic(topic.id as TopicId)}
-                        className={`group w-full text-left relative rounded-2xl border overflow-hidden transition-all duration-300 ${c.border} ${c.bgGhost} backdrop-blur-md ${c.glow} cursor-pointer`}
+                        className={`group w-full text-left relative rounded-2xl border overflow-hidden transition-all duration-300 ${c.border} bg-gradient-to-br from-zinc-900/60 to-zinc-950/80 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] backdrop-blur-md ${c.glow} cursor-pointer`}
                       >
                         <div className={`absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent ${c.via} to-transparent`} />
                         <div className="p-6">
                           <div className="flex items-start justify-between mb-4">
-                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${c.border} ${c.bgGhost} ${c.text}`}>{topic.icon}</div>
+                            <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${c.border} ${c.bgGhost} ${c.text} shadow-inner shadow-white/5`}>{topic.icon}</div>
                             <div className="flex items-center gap-2">
                               {completed.has(topic.id) && (<span className="text-[10px] font-mono text-emerald-400 border border-emerald-500/30 bg-emerald-500/8 px-2 py-0.5 rounded-full flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Done</span>)}
                               <span className={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border ${c.border} ${c.bgGhost} ${c.text}`}>{topic.difficulty}</span>
@@ -1047,10 +1206,9 @@ export default function FinancialManagementHub() {
               </AnimatePresence>
             </div>
             
-            {/* Unit 2 Final Quiz Button */}
-            <motion.div role="button" variants={fadeUp} initial="hidden" animate="visible" onClick={() => setActiveQuiz(2)} className="mt-5 w-full flex items-center justify-between p-6 bg-fuchsia-600/10 border border-fuchsia-500/30 rounded-2xl hover:bg-fuchsia-600/20 transition-all group cursor-pointer">
+            <motion.div role="button" variants={fadeUp} initial="hidden" animate="visible" onClick={() => setActiveQuiz(2)} className="mt-5 w-full flex items-center justify-between p-6 bg-gradient-to-r from-fuchsia-600/10 to-transparent border border-fuchsia-500/30 rounded-2xl hover:bg-fuchsia-600/20 transition-all group cursor-pointer shadow-[inset_0_1px_0_0_rgba(217,70,239,0.1)]">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400">
+                <div className="w-12 h-12 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 shadow-inner shadow-white/10">
                   <GraduationCap className="w-6 h-6" />
                 </div>
                 <div className="text-left">

@@ -7,13 +7,13 @@ import { Terminal } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Labs" },
+  { href: "/statistics", label: "Statistics" },
   { href: "/about", label: "About" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
 
-  // Hide the main navbar inside module pages (they have their own back-bar)
   const insideModule = pathname.startsWith("/modules");
   if (insideModule) return null;
 
@@ -25,7 +25,6 @@ export default function Navbar() {
       className="fixed top-0 inset-x-0 z-50 border-b border-zinc-900 bg-zinc-950/60 backdrop-blur-xl"
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
-        {/* ── Brand ─────────────────────────── */}
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="w-7 h-7 rounded-md bg-amber-500/10 border border-amber-500/30 flex items-center justify-center transition-colors group-hover:bg-amber-500/15">
             <Terminal className="w-3.5 h-3.5 text-amber-400" />
@@ -35,7 +34,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* ── Links ─────────────────────────── */}
         <div className="flex items-center gap-1">
           {NAV_LINKS.map((link) => {
             const active = pathname === link.href;
@@ -63,7 +61,6 @@ export default function Navbar() {
             );
           })}
 
-          {/* Status dot */}
           <div className="ml-3 flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
             <span className="text-[10px] font-mono text-zinc-700 hidden sm:inline">
